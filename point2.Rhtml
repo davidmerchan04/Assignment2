@@ -23,9 +23,8 @@ background-color: blue;
 <body>
  <h1>Point 2</h1> 
  
- <h2> First point </h2>
+<p> Plot automatically a data table by selecting the data from the files data1.csv, data2.csv and data3.csv </p>
 
-<p> Plot automatically a data table by selecting the data from the files data1.csv, data2.csv and data3.csv (Use an html  tag) </p>
  
 <!--According with the class code --> 
 <p> If you select some option a table will appear </p>
@@ -42,18 +41,18 @@ background-color: blue;
 <script>
 
 function dialog(){
-dshow ="data1.csv"
+dshow ="data2.csv"
 var v=document.getElementById('selector').value;
-if (v != "data1.csv"){
+if (v != "data2.csv"){
    dshow=v;}else{
-   dshow ="data1.csv";
+   dshow ="data2.csv";
   }
 
 // this function start again the selector
-function fun1(){
+function myfun(){
   var Table = document.getElementById('d3table').innerHTML = ''
 }
-fun1()
+myfun()
 
 
 d3.csv(v,data=> {
