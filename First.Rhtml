@@ -1,0 +1,164 @@
+<html>
+
+<title>Assignment #2</title>
+<script src="https://d3js.org/d3.v4.js">
+</script>
+<style>
+
+table { 
+width: 200px;
+}
+
+table td { 
+  width: 50%;
+  border: 1pt solid blue;
+  text-align: center;
+}
+
+td.value{
+background-color: blue;
+}
+
+td.name{
+background-color: lightblue;
+}
+
+
+</style>
+
+</head>
+
+<body>
+
+<h1> Assignment #2 </h1>
+
+<h2> First point </h2>
+
+<li> Render a box-plot with the data contained in the data1.csv file, showing also one point for each value of the data (use horizontal jitter). </li>
+
+<div id="table">
+<table>
+<col name="weight" class="weight selected">
+<col name="name" class="name">
+<tr></tr>
+<thead>
+<tr>
+<th>weight</th>
+<th>name</th>
+</thead>
+
+
+</table>
+</div>
+
+<div id="my_dataviz"></div>
+
+<svg height="200" width="200">
+
+</svg>
+
+
+<script>
+var my_csv_data;
+
+d3.csv("data1.csv", function(data){
+  my_csv_data = data;
+  d3.select("#table")
+  .append("table")
+  .selectAll("tr")
+  .data(data)
+  .enter()
+  .append("tr")
+  
+  .html(d=>"<td class='value'>"+d.weight+"</td>" + "<td class='name'>"+d.name+"</td>" );
+
+  var dd = data.map(d => + d.weight);
+  boxplot(dd); 
+})
+
+function boxplot(data) {
+
+// set the dimensions and margins of the graph
+var margin = {top: 10, right: 30, bottom: 30, left: 40},
+  width = 400 - margin.left - margin.right,
+  height = 400 - margin.top - margin.bottom;
+
+// append the svg object to the body of the page
+var svg = d3.select("#my_dataviz")
+.append("svg")  .attr("width", width + margin.left + margin.right)
+  .attr("height", height + margin.top + margin.bottom)
+.append("g")
+  .attr("transform",
+        "translate(" + margin.left + "," + margin.top + ")");
+
+// Compute summary statistics used for the box:
+var data_sorted = data.sort(d3.ascending)
+var q1 = d3.quantile(data_sorted, .25)
+var median = d3.quantile(data_sorted, .5)
+var q3 = d3.quantile(data_sorted, .75)
+var interQuantileRange = q3 - q1
+var min = q1 - 1.5 * interQuantileRange
+var max = q1 + 1.5 * interQuantileRange
+
+// Show the Y scale
+var y = d3.scaleLinear()
+  .domain([min * 0.9, max*1.1])      
+  .range([height, 0]);
+svg.call(d3.axisLeft(y))
+
+// a few features for the box
+var center = 200
+var width = 100
+
+// Show the main vertical line
+svg
+.append("line")
+  .attr("x1", center)
+  .attr("x2", center)
+  .attr("y1", y(min) )
+  .attr("y2", y(max) )
+  .attr("stroke", "black")
+
+// Show the box
+svg
+.append("rect")
+  .attr("x", center - width/2)
+  .attr("y", y(q3) )
+  .attr("height", (y(q1)-y(q3)) )
+  .attr("width", width )
+  .attr("stroke", "black")
+  .style("fill", "#69b3a2")
+
+// show median, min and max horizontal lines
+svg
+.selectAll("toto")
+.data([min, median, max])
+.enter()
+.append("line")
+  .attr("x1", center-width/2)
+  .attr("x2", center+width/2)
+  .attr("y1", function(d){ return(y(d))} )
+  .attr("y2", function(d){ return(y(d))} )
+  .attr("stroke", "black")
+
+// show the data circles 
+
+var jitter=100
+svg
+.selectAll("indPoints")
+.data(data)
+.enter()
+.append("circle")
+ .attr("cx", d => 150 + Math.random()*jitter)
+ .attr("cy", function(d){return(y(d))} )
+ .attr('r', 2)
+ .style("fill", "white")
+ .attr("stroke", "black")
+ 
+}
+
+</script>
+
+
+</body>
+</html>
